@@ -1,0 +1,93 @@
+/*main styles*/
+
+body{
+    background-color:#111;
+    color:#DDD;
+}
+
+.main{
+    text-align:center;
+    position:relative;
+    height:100vh;
+}
+
+.game-setting{
+    padding:15px;
+}
+
+#gameContainer{
+    padding:10px;
+}
+
+#NewGameButton {
+    color: white;
+    background-color: #AAA;
+    padding: 2.5px 10px;
+    border-radius: 3px;
+    text-decoration:none;
+}
+
+.game-main {
+    margin: auto;
+    text-align: center;
+}
+
+table{
+    margin:auto;
+    border-collapse:separate;
+}
+
+td {
+    font-size:10px;
+    font-weight:bolder;
+    padding: 1px 2px;
+    min-width: 9px;
+    min-height: 11px;
+    text-align: center;
+}
+
+.option-box{
+    text-align:center;
+}
+
+.option{
+    padding:3px;
+}
+.option>span{
+    text-align:center;
+}
+.option>input{
+    width:30px;
+}
+
+.clearfix::after{
+    content:'';
+    clear:both;
+    display:block;
+}
+
+
+.tile-mark {
+    background-color: rgba(187, 85, 12, 1);
+}
+.tile-cover {
+    background-color: rgba(30,30,30,1);
+
+}
+.tile-mine {
+    background-color: rgba(224, 0, 0, 1);
+}
+.tile-empty {
+    background-color: rgba(52, 201, 38, 0.65);
+}
+.tile-reveal {
+    background-color: rgba(52, 201, 38, 0.9);
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none; 
+    user-select: none; 
+}

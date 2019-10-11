@@ -1,0 +1,13 @@
+{
+  "gameName": "MineSwiper",
+  "maxRows": 300,
+  "maxColumns": 300,
+  "minRowsAndColumns": 10,
+  "minesProcent": 0,
+  "Animator": 
+    {
+      "oneStepTime": 4,
+      "maxTime": 200
+    }
+  
+}
