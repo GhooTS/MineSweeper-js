@@ -4,6 +4,43 @@ var MineSweeper = (function () {
     const maxColumnsNumber = 99;
     const minSize = 5;
 
+    var GameData = (function ()
+    {
+        var markTiles = 0;
+        var minesLeft = 0;
+
+        function Reset() {
+            this.markTiles = 0;
+        }
+
+        return {
+            markTiles: markTiles,
+            minesLeft: minesLeft,
+            Reset: Reset
+        }
+    }());
+
+    var UI = (function () {
+        var markTilesCounter = document.getElementById("markTiles");
+        var minesLeftCounter = document.getElementById("minesLeft");
+
+
+        function Update(){
+            markTilesCounter.innerText = GameData.markTiles;
+            var minesLeft = GameData.minesLeft - GameData.markTiles;
+            minesLeftCounter.innerText = minesLeft;
+            if (minesLeft < 0) {
+                minesLeftCounter.style.color = "rgb(224, 29, 29)";
+            } else {
+                minesLeftCounter.style.color = "white";
+            }
+        }
+
+        return {
+            Update: Update
+        }
+    }())
+
     var BoardCreator = (function () {
 
         function InitaleGameState(numberOfRows, numberOfColumns) {
@@ -230,7 +267,6 @@ var MineSweeper = (function () {
                 ClearMarkFlag(row, column);
                 output = -2;
 
-
             } else {
                 SetMarkFlag(row, column);
 
@@ -350,8 +386,8 @@ var MineSweeper = (function () {
     }());
 
     var Animator = (function () {
-        var maxTime = 10;
-        var oneStepTime = 100;
+        var maxTime = 300;
+        var oneStepTime = 5;
         var drawFunc;
         var revealer = new Utility.singleInterval();
         var tileToReveal;
@@ -443,6 +479,7 @@ var MineSweeper = (function () {
                     break;
                 case -2: //unmark
                     className = unrevealTileClass;
+                    tileText = "0"
                     break;
                 case -1:
                     className = mineTileClass;
@@ -542,9 +579,10 @@ var MineSweeper = (function () {
     }());
 
     var TimerCounter = (function () {
-        var time = 0;
+        var time = -1;
         var timerBox = document.getElementById("gameTimer");
         var timerId;
+        var active = false;
 
         function countTime() {
             timerBox.innerText = time + "s";
@@ -553,6 +591,7 @@ var MineSweeper = (function () {
 
         var start = function () {
             stop();
+            this.active = true;
             time = 0;
             countTime();
             timerId = setInterval(countTime, 1000);
@@ -563,11 +602,13 @@ var MineSweeper = (function () {
                 clearInterval(timerId);
                 timerId = undefined;
             }
+            this.active = false;
         }
 
         return {
             start: start,
-            stop: stop
+            stop: stop,
+            active: active
         }
 
     }());
@@ -593,6 +634,10 @@ var MineSweeper = (function () {
 
         function RevealTile(row, column) {
 
+            if (TimerCounter.active == false) {
+                TimerCounter.start();
+            }
+
             if (Animator.IsProcessing()) {
                 return;
             }
@@ -604,14 +649,21 @@ var MineSweeper = (function () {
             }
 
             BoardUIController.SetTilesToReveal(tiles, true);
+            UI.Update();
         }
 
         function MarkTile(row, column) {
+            if (TimerCounter.active == false) {
+                TimerCounter.start();
+            }
+
             value = BoardController.markTile(row, column);
             if (value == null) {
                 return;
             }
+            GameData.markTiles += value == -4 ? 1 : -1;
             BoardUIController.UpdateTile(row, column, value);
+            UI.Update();
         }
 
         return {
@@ -627,10 +679,10 @@ var MineSweeper = (function () {
             if (result) {
                 RevealAllTiles();
                 RevealBombs();
-                ResultBox.update("noice :)");
+                ResultBox.update("Result: Noice :)","#89ff87");
             } else {
                 RevealBombs();
-                ResultBox.update("better luck next time :(");
+                ResultBox.update("Result: Better luck next time :(","#ff8787");
             }
         }
 
@@ -666,7 +718,6 @@ var MineSweeper = (function () {
             BoardController.NewBoard(numberOfRows, numberOfColumns, minesNumber);
             BoardUIController.CreateBoard(BoardController.Rows, BoardController.Columns);
             AddPlayerControls();
-            TimerCounter.start();
         }
 
         function CheckIfGameWin() {
@@ -699,13 +750,14 @@ var MineSweeper = (function () {
             columns = setValue(columns, minSize, minSize, maxColumnsNumber);
             mines = setValue(mines, 1, 1, (rows * columns - 1));
 
-            console.log(rows);
-
             rowField.value = rows;
             columnField.value = columns;
             mineField.value = mines;
 
+            GameData.Reset();
             GameController.StartGame(rows, columns, mines);
+            GameData.minesLeft = mines;
+            UI.Update();
 
             function setValue(value, defaultValue, min, max) {
                 var output;
@@ -730,8 +782,9 @@ var MineSweeper = (function () {
         var resultBox = document.getElementById("resultBox");
 
 
-        var update = function (content) {
+        var update = function (content,color) {
             resultBox.innerText = content;
+            resultBox.style.color = color;
         }
 
         return {
