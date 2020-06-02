@@ -187,6 +187,10 @@ var Utility = (function () {
         }
     }
 
+    var clamp = function (value, min, max) {
+        return Math.min(max, Math.max(value, min));
+    }
+
     return {
         hashTable: hashTable,
         hashTableTest: testHashTable,
@@ -194,6 +198,7 @@ var Utility = (function () {
         rowFromID: rowFromID,
         columnFromID: columnFromID,
         cordinationToID: cordinationToID,
-        singleInterval: singleInterval
+        singleInterval: singleInterval,
+        clamp: clamp
     }
 }());
